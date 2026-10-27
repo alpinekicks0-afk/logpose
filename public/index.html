@@ -3712,6 +3712,44 @@ function renderBrowse(s){
 
 const MS_RANK = ["Crew Alt-Art","Oda Signature","Special Manga","Manga Leader","Manga Rare","Event Manga","Gold SSP","Silver SSP","Demon Pack SSP","Wanted SP","Special Alt-Art","SP Card","Anime 25th parallel","Chinese TR","French TR","Japanese TR","Treasure Rare"];
 const msRank = c => { const i = MS_RANK.indexOf(c.place); return i < 0 ? MS_RANK.length : i; };
+/* ---- Image loading safety net ----------------------------------------
+   Images are emitted with loading="lazy" so a tab with hundreds of cards does
+   not fetch everything at once. Lazy loading only fires for images the browser
+   considers near the viewport, and it does not fire at all while a page is in
+   a background tab — so a card could sit with an empty frame even though its
+   file is right there on the server. This promotes an image to a normal eager
+   load the moment it is actually on screen, and whenever the folder holding it
+   is opened, which covers both cases without fetching the whole dex up front. */
+const eagerLoad = img => {
+  if (!img || img.dataset.eager === "1") return;
+  img.dataset.eager = "1";
+  img.loading = "eager";
+  img.decoding = "async";
+  const src = img.getAttribute("src");
+  if (src && !img.complete) { img.removeAttribute("src"); img.setAttribute("src", src); }
+};
+const imgSeen = ("IntersectionObserver" in window)
+  ? new IntersectionObserver((entries, obs) => {
+      for (const e of entries) if (e.isIntersecting) { eagerLoad(e.target); obs.unobserve(e.target); }
+    }, { rootMargin: "600px 0px" })
+  : null;
+function watchImages(root){
+  const scope = root || document;
+  scope.querySelectorAll('img[loading="lazy"]:not([data-eager])').forEach(img => {
+    if (imgSeen) imgSeen.observe(img); else eagerLoad(img);
+  });
+}
+function openFolderImages(el){ if (el) el.querySelectorAll("img").forEach(eagerLoad); }
+document.addEventListener("toggle", e => {
+  if (e.target && e.target.tagName === "DETAILS" && e.target.open) openFolderImages(e.target);
+}, true);
+new MutationObserver(ms => {
+  for (const m of ms) for (const n of m.addedNodes) {
+    if (n.nodeType !== 1) continue;
+    if (n.tagName === "IMG") { imgSeen ? imgSeen.observe(n) : eagerLoad(n); }
+    else watchImages(n);
+  }
+}).observe(document.documentElement, { childList:true, subtree:true });
 function renderSection(key){
   onCard = null;
   pushNav({kind:"tab", tab:key, view});
