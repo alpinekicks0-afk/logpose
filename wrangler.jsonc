@@ -1,0 +1,11 @@
+{
+  // Static site. Everything served from ./public — keeping the site in its own
+  // folder stops the deploy from sweeping in .git, whose pack file is larger
+  // than Cloudflare's 25 MiB per-asset limit.
+  "name": "logpose",
+  "compatibility_date": "2026-10-23",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}

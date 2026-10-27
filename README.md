@@ -10,16 +10,20 @@ Live at **https://logpose.cards**
 
 A static site. No build step, no dependencies, no server.
 
-- `index.html` — the entire site: markup, styles, data and logic in one file
-- `img/` — every card scan and page image
-- `404.html` — a copy of the page, so mistyped URLs land on the site
-- `_headers` — Cloudflare caching rules
-- `robots.txt`, `sitemap.xml` — search engine basics
-- `favicon.svg`, `apple-touch-icon.png`, `og.png` — icons and social preview
+- `public/index.html` — the entire site: markup, styles, data and logic in one file
+- `public/img/` — every card scan and page image
+- `public/404.html` — a copy of the page, so mistyped URLs land on the site
+- `public/_headers` — Cloudflare caching rules
+- `public/robots.txt`, `public/sitemap.xml` — search engine basics
+- `public/favicon.svg`, `public/apple-touch-icon.png`, `public/og.png` — icons and social preview
 
 ## Deploying
 
-Connected to Cloudflare Pages. Pushing to `main` deploys automatically.
+Connected to Cloudflare. Pushing to `main` deploys automatically.
+
+The site lives in `public/` and `wrangler.jsonc` points there. Keeping it out
+of the repo root is deliberate: Cloudflare caps a single asset at 25 MiB, and
+publishing from the root would try to upload `.git` along with the site.
 
 ## Unofficial fan project
 
