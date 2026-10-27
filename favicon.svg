@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Log Pose compass">
+  <defs>
+    <radialGradient id="g" cx="38%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#1b3a57"/>
+      <stop offset="1" stop-color="#0b1f33"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#g)"/>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#d9a33a" stroke-width="4"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#d9a33a" stroke-width="1.6" opacity=".55"/>
+  <g stroke="#e4d4ad" stroke-width="2.4" stroke-linecap="round" opacity=".75">
+    <path d="M32 7v6"/><path d="M32 51v6"/><path d="M7 32h6"/><path d="M51 32h6"/>
+  </g>
+  <path d="M44 20 28.5 28.5 20 44l15.5-8.5z" fill="#d9a33a"/>
+  <path d="M20 44l8.5-15.5L35.5 35.5z" fill="#efe3c6"/>
+  <circle cx="32" cy="32" r="3.4" fill="#0b1f33" stroke="#d9a33a" stroke-width="2"/>
+  <ellipse cx="22" cy="18" rx="7" ry="4.5" fill="#ffffff" opacity=".16" transform="rotate(-32 22 18)"/>
+</svg>
