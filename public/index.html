@@ -3564,9 +3564,15 @@ const CSSET_TABS = new Set(["regionals","treasure","nationals","worlds"]);
 const REGIONS = ["North America","Europe","Latin America","Oceania"];
 /* ---- Navigation history: every screen, tab, view and card page is a state; Back returns to the previous one ---- */
 let restoring = false, navDepth = 0;
+/* The landing screen is its own address: logpose.cards/start. Tabs and cards
+   still live behind # fragments of the root page, so leaving home has to put
+   the path back or those fragments would hang off /start. */
+const HOME_URL = "/start";
+const LOG_URL = "/";
 function pushNav(st){
   if (restoring) return;
-  const url = st.kind==="card" ? "#"+st.tab+"/"+st.id : st.kind==="tab" ? "#"+st.tab : st.kind==="home" ? "#" : "#map";
+  let url = st.kind==="card" ? "#"+st.tab+"/"+st.id : st.kind==="tab" ? "#"+st.tab : st.kind==="home" ? HOME_URL : "#map";
+  if (url.charAt(0) === "#") url = LOG_URL + url;
   try{ history.pushState(st, "", url); }catch(e){}
   navDepth++; updateBackButtons();
 }
@@ -4428,7 +4434,11 @@ restoring = true;
 if (SECTIONS[h] || h === "citations" || h === "featured") showScreen("log"); else showScreen("home");
 if (deepCard && CARDS[deepCard]) renderCard(deepCard);
 restoring = false; navDepth = 0;
-try{ history.replaceState((SECTIONS[h]||h==="citations"||h==="featured") ? {kind:"tab",tab:h,view} : {kind:"home"}, "", location.hash||"#"); }catch(e){}
+try{
+  const onLog = SECTIONS[h] || h === "citations" || h === "featured";
+  history.replaceState(onLog ? {kind:"tab",tab:h,view} : {kind:"home"}, "",
+    onLog ? (LOG_URL + "#" + h + (deepCard ? "/" + deepCard : "")) : HOME_URL);
+}catch(e){}
 document.querySelectorAll(".nav-back").forEach(b => b.addEventListener("click", goBack));
 updateBackButtons();
 </script>
