@@ -136,6 +136,15 @@ def main(site_json, out_dir):
     cards, secs, sch, src = data["cards"], data["secs"], data["sch"], data["src"]
     tabnames, spotlight = data["tabNames"], data.get("spotlight", {})
 
+    # Character groupings are needed while writing card pages, so load first.
+    chars_path = os.path.join(os.path.dirname(site_json), "chars.json")
+    chars = json.load(open(chars_path, encoding="utf-8")) if os.path.exists(chars_path) else []
+    char_slug = {ch["name"]: slug(ch["name"])[:70] for ch in chars}
+    char_of = {}
+    for ch in chars:
+        for i in ch["ranked"] + ch["extra"]:
+            char_of.setdefault(i, ch["name"])
+
     # ---- card pages -----------------------------------------------------
     urls = []
     card_slug = {}
@@ -239,6 +248,29 @@ def main(site_json, out_dir):
 
         body.append(f'<p><a class="cta" href="/#{esc(tab)}/{esc(cid)}">Open in the full dex →</a></p>')
 
+        # Onward links: the character's own page, and a few siblings from the
+        # same section. Without these each card page is a dead end for a
+        # crawler and carries none of its neighbours' weight.
+        rel = []
+        who = char_of.get(cid)
+        if who and who in char_slug:
+            rel.append(f'<a href="/character/{char_slug[who]}/">All {esc(who)} cards</a>')
+        rel.append(f'<a href="/s/{TAB_SLUG.get(tab, slug(tab))}/">All {esc(tabname)} cards</a>')
+        sibs = [i for i in (secs.get(tab, {}).get("categories") and
+                [x for c_ in secs[tab]["categories"] for x in c_["cards"]] or [])
+                if i in card_slug and i != cid][:6]
+        if rel or sibs:
+            body.append("<h2>More in Log Pose</h2>")
+            body.append("<p>" + " · ".join(rel) + "</p>")
+            if sibs:
+                body.append('<ul class="grid">')
+                for i in sibs:
+                    c2 = cards[i]
+                    im = f'<img src="/{esc(c2["image"])}" alt="" loading="lazy">' if c2.get("image") else ""
+                    body.append(f'<li><a href="/card/{card_slug[i]}/">{im}<b>{esc(c2["name"])}</b>'
+                                f'<span>{esc(c2["number"])} · {esc(c2.get("pop") or "")}</span></a></li>')
+                body.append("</ul>")
+
         jl = ld({
             "@context": "https://schema.org", "@type": "ItemPage",
             "name": f"{c['name']} {c['number']}", "description": desc, "url": canon,
@@ -289,6 +321,77 @@ def main(site_json, out_dir):
              desc=esc(clip(s["blurb"], 300)), canon=canon, ogtitle=esc(s["title"]),
              jsonld=jl, body="\n".join(body))
         urls.append((canon, "weekly", "0.8"))
+
+    # ---- character pages ------------------------------------------------
+    if chars:
+        for ch in chars:
+            ranked = [i for i in ch["ranked"] if i in card_slug]
+            extra = [i for i in ch["extra"] if i in card_slug]
+            if not ranked and not extra:
+                continue
+            sl = char_slug[ch["name"]]
+            canon = f"{SITE}/character/{sl}/"
+            total = len(ranked) + len(extra)
+            rarest = cards[ranked[0]] if ranked else None
+            desc = clip(
+                f"Every {ch['name']} card tracked by Log Pose — {total} in total"
+                + (f", rarest first, starting with the {rarest['number']} {rarest.get('place','')} at {rarest.get('pop','')}" if rarest else "")
+                + ". Championship prize cards with documented populations, plus main-set hits and promos.", 300)
+            body = [f'<nav class="crumb"><a href="/">Log Pose</a> › <a href="/characters/">Characters</a> › {esc(ch["name"])}</nav>',
+                    f'<h1>{esc(ch["name"])}</h1>',
+                    f'<p class="sub">{esc(clip(ch.get("blurb") or ch["name"] + " cards on Log Pose, rarest first.", 300))}</p>']
+            def grid(ids):
+                out = ['<ul class="grid">']
+                for i in ids:
+                    c = cards[i]
+                    img = f'<img src="/{esc(c["image"])}" alt="" loading="lazy">' if c.get("image") else ""
+                    out.append(f'<li><a href="/card/{card_slug[i]}/">{img}<b>{esc(c["number"])}</b>'
+                               f'<span>{esc(c.get("place") or "")} · {esc(c.get("pop") or "")}</span></a></li>')
+                out.append("</ul>")
+                return out
+            if ranked:
+                body.append(f"<h2>Championship cards, rarest first ({len(ranked)})</h2>")
+                body.extend(grid(ranked))
+            if extra:
+                body.append(f"<h2>Main sets and iconic promos ({len(extra)})</h2>")
+                body.append("<p>Booster pulls and handed-out promos. Bandai publishes no count for these.</p>")
+                body.extend(grid(extra))
+            body.append(f'<p><a class="cta" href="/#characters">Open the Character Index →</a></p>')
+            jl = ld({"@context": "https://schema.org", "@type": "CollectionPage",
+                     "name": f"{ch['name']} — every card", "description": desc, "url": canon,
+                     "isPartOf": {"@type": "WebSite", "name": NAME, "url": SITE + "/"}})
+            cover = next((cards[i]["image"] for i in ranked + extra if cards[i].get("image")), "")
+            page(f"/character/{sl}/", out_dir,
+                 title=esc(f"{ch['name']} — every card and population | Log Pose"),
+                 desc=esc(desc), canon=canon, ogtitle=esc(f"{ch['name']} — every card"),
+                 ogimage=(SITE + "/" + cover) if cover else SITE + "/og.png",
+                 jsonld=jl, body="\n".join(body))
+            urls.append((canon, "weekly", "0.8"))
+
+        # index of characters
+        body = ['<nav class="crumb"><a href="/">Log Pose</a> › Characters</nav>',
+                "<h1>Every character in Log Pose</h1>",
+                f'<p class="sub">All {len(char_slug)} characters with cards on the site. Each page lists that '
+                "character's championship cards rarest first, then their main-set hits and promos.</p>",
+                '<ul class="grid">']
+        for ch in chars:
+            ids = [i for i in ch["ranked"] + ch["extra"] if i in card_slug]
+            if not ids:
+                continue
+            cover = next((cards[i]["image"] for i in ids if cards[i].get("image")), "")
+            img = f'<img src="/{esc(cover)}" alt="" loading="lazy">' if cover else ""
+            body.append(f'<li><a href="/character/{char_slug[ch["name"]]}/">{img}'
+                        f'<b>{esc(ch["name"])}</b><span>{len(ids)} cards</span></a></li>')
+        body.append("</ul>")
+        page("/characters/", out_dir,
+             title="Every ONE PIECE Card Game character and their cards | Log Pose",
+             desc=esc("Browse every character with cards on Log Pose — championship prize cards with documented "
+                      "populations, main-set hits and promos, grouped by character and ranked rarest first."),
+             canon=SITE + "/characters/", ogtitle="Every character in Log Pose",
+             jsonld=ld({"@context": "https://schema.org", "@type": "CollectionPage",
+                        "name": "Every character in Log Pose", "url": SITE + "/characters/"}),
+             body="\n".join(body))
+        urls.append((SITE + "/characters/", "weekly", "0.9"))
 
     # ---- index of every card -------------------------------------------
     by_tab = {}
