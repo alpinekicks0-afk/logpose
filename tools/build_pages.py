@@ -419,6 +419,96 @@ def main(site_json, out_dir):
          body="\n".join(body))
     urls.append((SITE + "/cards/", "weekly", "0.9"))
 
+    # ---- rarest cards ranking -------------------------------------------
+    # The most linkable page on the site: a single ranked list is the thing
+    # people cite and argue with, which is what earns inbound links.
+    ranked = sorted(
+        [i for i in card_slug if cards[i].get("popKey")],
+        key=lambda i: (cards[i]["popKey"], cards[i]["name"]))
+    if ranked:
+        body = ['<nav class="crumb"><a href="/">Log Pose</a> › Rarest cards</nav>',
+                "<h1>The rarest ONE PIECE Card Game cards, by documented population</h1>",
+                '<p class="sub">Every card on Log Pose that has a documented population, ranked from fewest '
+                'copies to most. Counts come from Bandai&rsquo;s own event and product pages; each card links to '
+                'the working behind its number. Cards with no published print run are listed separately at '
+                '<a href="/cards/">every card</a>.</p>',
+                "<table><thead><tr><th>#</th><th>Card</th><th>Number</th><th>Tier</th><th class='n'>Population</th></tr></thead><tbody>"]
+        for n, i in enumerate(ranked, 1):
+            c = cards[i]
+            body.append(
+                f"<tr><td class='n'>{n}</td>"
+                f"<td><a href='/card/{card_slug[i]}/'>{esc(c['name'])}</a></td>"
+                f"<td>{esc(c['number'])}</td><td>{esc(c.get('place') or '')}</td>"
+                f"<td class='n'>{esc(c.get('pop') or '')}</td></tr>")
+        body.append("</tbody></table>")
+        body.append('<p><a class="cta" href="/#featured">Browse the chase cards →</a></p>')
+        page("/rarest/", out_dir,
+             title="The rarest One Piece TCG cards by population | Log Pose",
+             desc=esc(f"All {len(ranked)} ONE PIECE Card Game cards with a documented population, ranked rarest "
+                      "first — championship trophies, serial-numbered chase cards and prize alt-arts, each "
+                      "counted from Bandai's own event pages."),
+             canon=SITE + "/rarest/", ogtitle="The rarest One Piece TCG cards",
+             jsonld=ld({"@context": "https://schema.org", "@type": "Dataset",
+                        "name": "ONE PIECE Card Game card populations",
+                        "description": "Documented population counts for ONE PIECE Card Game championship prize "
+                                       "cards, serialised chase cards and promos, compiled from Bandai's "
+                                       "official event and product pages.",
+                        "url": SITE + "/rarest/", "creator": {"@type": "Organization", "name": NAME, "url": SITE + "/"},
+                        "isAccessibleForFree": True, "license": SITE + "/#about"}),
+             body="\n".join(body))
+        urls.append((SITE + "/rarest/", "weekly", "0.9"))
+
+    # ---- questions page --------------------------------------------------
+    qa = []
+    if ranked:
+        top = cards[ranked[0]]
+        qa.append(("What is the rarest ONE PIECE Card Game card?",
+                   f"By documented population the scarcest card tracked here is the {top['name']} {top['number']} "
+                   f"({top.get('place','')}), at {top.get('pop','')}. Several World Final and Coliseum trophy cards "
+                   "are one-of-one, awarded to a single champion and never sold."))
+    pt = next((cards[i] for i in card_slug if cards[i]["number"] == "P-033"), None)
+    if pt:
+        qa.append(("How many textured finalist Luffy cards exist?",
+                   f"The P-033 Monkey.D.Luffy from the Championship 2023 Event Pack Finalist Ver. sits at "
+                   f"{pt.get('pop','')}. Only Top 32 finishers at the 2023 Finals received the pack, and it held "
+                   "eleven textured cards, so the count is packs awarded divided across the card types."))
+    qa += [
+        ("What does a population count mean on Log Pose?",
+         "It is the number of copies that can be accounted for from Bandai's published event and product pages: "
+         "events run, multiplied by the copies awarded at each placement. A plus sign means the figure is a floor "
+         "— copies exist that cannot be counted, usually from store-run events whose host list Bandai never "
+         "published."),
+        ("Are these numbers the same as PSA or Beckett population reports?",
+         "No. Graded population reports count cards submitted for grading, and the same card can be counted twice "
+         "if it is cracked and resubmitted. These figures count copies awarded at source, which is a different "
+         "measure and usually a much smaller number."),
+        ("What is a serial-numbered One Piece card?",
+         "A card printed with its own number on the face, such as 047/700. Bandai has used them for Regionals, "
+         "Treasure Cup and World Final prizes. Because the run size is printed on the card itself, these are the "
+         "only ONE PIECE cards with a population that is certain rather than reconstructed."),
+        ("Which One Piece cards are one-of-one?",
+         "The World Final champion trophies from the 25-26 season onward are serial-numbered 1/1, as are the "
+         "Flame-Flame Fruit Coliseum regional champion trophies. Each exists in a single copy for its region or "
+         "placement."),
+    ]
+    body = ['<nav class="crumb"><a href="/">Log Pose</a> › Questions</nav>',
+            "<h1>Questions about One Piece TCG card populations</h1>",
+            '<p class="sub">How the counts on this site are built, and the questions collectors ask most. '
+            'Every figure links to the card page that shows its working.</p>']
+    for q, a in qa:
+        body.append(f"<h2>{esc(q)}</h2><p>{esc(a)}</p>")
+    body.append('<p><a class="cta" href="/cards/">See every card and its population →</a></p>')
+    page("/questions/", out_dir,
+         title="One Piece TCG card population questions answered | Log Pose",
+         desc=esc("What population counts mean, how they differ from PSA and Beckett reports, which One Piece "
+                  "cards are one-of-one, and how many textured finalist Luffys exist."),
+         canon=SITE + "/questions/", ogtitle="One Piece TCG population questions",
+         jsonld=ld({"@context": "https://schema.org", "@type": "FAQPage",
+                    "mainEntity": [{"@type": "Question", "name": q,
+                                    "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}),
+         body="\n".join(body))
+    urls.append((SITE + "/questions/", "monthly", "0.8"))
+
     # ---- sitemap --------------------------------------------------------
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

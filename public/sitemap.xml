@@ -918,4 +918,6 @@
   <url><loc>https://logpose.cards/character/yamato/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://logpose.cards/characters/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://logpose.cards/cards/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://logpose.cards/rarest/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://logpose.cards/questions/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
