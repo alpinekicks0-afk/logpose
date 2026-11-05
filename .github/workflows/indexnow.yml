@@ -1,0 +1,63 @@
+name: IndexNow
+
+# Tell Bing (and the other IndexNow engines) the moment a page changes, instead
+# of waiting for a crawl. Only the pages touched by the push are submitted.
+on:
+  push:
+    branches: [main]
+    paths: ['public/**']
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Collect changed URLs and submit
+        env:
+          INDEXNOW_KEY: 7dfe256ef8c6c1c79dfd4f5ae510bd50
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess, urllib.request
+
+          KEY = os.environ["INDEXNOW_KEY"]
+          HOST = "logpose.cards"
+
+          diff = subprocess.run(
+              ["git", "diff", "--name-only", "HEAD^", "HEAD"],
+              capture_output=True, text=True, check=True).stdout.split()
+
+          urls = set()
+          for f in diff:
+              if not f.startswith("public/") or f.endswith(f"{KEY}.txt"):
+                  continue
+              rel = f[len("public/"):]
+              if rel == "index.html":
+                  urls.add(f"https://{HOST}/")
+              elif rel.endswith("/index.html"):
+                  urls.add(f"https://{HOST}/{rel[:-len('index.html')]}")
+              elif rel.endswith((".html", ".xml", ".txt")):
+                  urls.add(f"https://{HOST}/{rel}")
+
+          urls = sorted(urls)[:10000]
+          if not urls:
+              print("No page changes to submit.")
+              raise SystemExit(0)
+
+          payload = json.dumps({
+              "host": HOST,
+              "key": KEY,
+              "keyLocation": f"https://{HOST}/{KEY}.txt",
+              "urlList": urls,
+          }).encode()
+
+          req = urllib.request.Request(
+              "https://api.indexnow.org/IndexNow", data=payload,
+              headers={"Content-Type": "application/json; charset=utf-8"})
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print(f"IndexNow returned {r.status} for {len(urls)} URL(s)")
+          for u in urls[:20]:
+              print(" ", u)
+          PY
