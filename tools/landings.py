@@ -69,6 +69,22 @@ TAB_GROUP = {
 FAMILY = {"OP": "Boosters", "EB": "Extra Boosters", "PRB": "Premium Boosters", "ST": "Starter decks"}
 FAMILY_ORDER = ["OP", "EB", "PRB", "ST"]
 
+# English booster titles from Bandai's product pages on en.onepiece-cardgame.com.
+# OP-14 and OP-15 are sold as OP14-EB04 and OP15-EB04, so the catalog headings
+# are bare codes. Used only when a heading has no subtitle of its own.
+# OP-14: BOOSTER PACK -THE AZURE SEA'S SEVEN- [OP14-EB04]
+# OP-15: BOOSTER PACK -ADVENTURE ON KAMI'S ISLAND- [OP15-EB04]
+# OP-16: BOOSTER PACK -THE TIME OF BATTLE- [OP-16]
+# OP-17: BOOSTER PACK -THE WORLD'S STRONGEST WARRIORS- [OP-17]
+# OP-18: BOOSTER PACK -THE DOMINANCE OF GOD- [OP-18]
+OFFICIAL_SET_NAMES = {
+    "OP-14": "The Azure Sea's Seven",
+    "OP-15": "Adventure on Kami's Island",
+    "OP-16": "The Time of Battle",
+    "OP-17": "The World's Strongest Warriors",
+    "OP-18": "The Dominance of God",
+}
+
 OLD_FOOT = '<p><a href="/">Home</a> · <a href="/cards/">All cards</a> · <a href="/#citations">Citations</a></p>'
 NEW_FOOT = ('<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> '
             '· <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/#citations">Citations</a></p>')
@@ -403,6 +419,9 @@ def plan(cards, card_slug, sections, prize_sets, ms_release, ms_tier, existing_t
     # ---- sets -----------------------------------------------------------
     subtitles = names_from_sections(sections)
     subtitles.update({k: v for k, v in starter_names(cards).items() if k not in subtitles})
+    for code, name in OFFICIAL_SET_NAMES.items():
+        if not subtitles.get(code):
+            subtitles[code] = name
     members = defaultdict(list)
     for cid in card_slug:
         card = cards.get(cid) or {}
@@ -1195,11 +1214,17 @@ def render(plan_obj, out_dir, cards, card_slug):
             if cards[i].get("image"):
                 cover = cards[i]["image"]
                 break
+        ogimage = (SITE + "/" + cover) if cover else SITE + "/og.png"
+        extra = {}
+        if cover:
+            sheet = any(cards[i].get("image") == cover and cards[i].get("kind") == "sheet"
+                        for i in page.get("ids") or [])
+            extra["ogextra"] = bp.og_extra(page["title"], 800, 1000) if sheet else bp.og_extra(page["title"], 630, 880)
         bp.page(page["path"], out_dir,
                 title=esc(page["title"]), desc=esc(page["desc"]), canon=SITE + page["path"],
-                ogtitle=esc(page["h1"]), ogtype="website",
-                ogimage=(SITE + "/" + cover) if cover else SITE + "/og.png",
-                jsonld=bp.ld(data), body=body)
+                ogtitle=esc(page["title"]), ogtype="website",
+                ogimage=ogimage,
+                jsonld=bp.ld(data), body=body, **extra)
         pri = "0.9" if page["kind"] == "hub" else "0.8"
         freq = "weekly" if page["kind"] == "hub" else "monthly"
         urls.append((SITE + page["path"], freq, pri))

@@ -10,7 +10,9 @@ Live at **https://logpose.cards**
 
 A static site. No build step, no dependencies, no server.
 
-- `public/index.html` — the entire site: markup, styles, data and logic in one file
+- `public/index.html` — the site: markup, styles and app logic
+- `public/assets/data.*.js` — the card catalog, loaded by the home page and cached immutably. `tools/build_pages.py` renames it when the contents change
+- `public/assets/card-slugs.js` — card id to `/card/<slug>/` permalinks, written by the page build
 - `public/img/` — every card scan and page image
 - `public/404.html` — a copy of the page, so mistyped URLs land on the site
 - `public/_headers` — Cloudflare caching rules

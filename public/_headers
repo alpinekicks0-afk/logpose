@@ -16,3 +16,11 @@
   Cache-Control: public, max-age=0, must-revalidate
 /sitemap.xml
   Cache-Control: public, max-age=3600
+/assets/data.*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/card-slugs.js
+  Cache-Control: public, max-age=0, must-revalidate
+/about/*
+  Cache-Control: public, max-age=0, must-revalidate
+/methodology/*
+  Cache-Control: public, max-age=0, must-revalidate
