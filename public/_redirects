@@ -1,3 +1,7 @@
 # A short, shareable link to the Set Sail landing screen.
 /start      /    302
 /start/     /    302
+
+# The founders screen is gone. Old guesses at its URL land on the homepage.
+/founders   /    301
+/founders/  /    301
