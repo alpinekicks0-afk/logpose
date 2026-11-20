@@ -109,7 +109,7 @@ footer{{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-s
 <p><strong>Log Pose</strong> is an unofficial fan project. Not affiliated with, endorsed by or connected to
 Bandai, Shueisha, Toei Animation or Eiichiro Oda. All card images and artwork belong to their respective owners.
 Population figures are our own research from the official sources cited on each page.</p>
-<p><a href="/">Home</a> · <a href="/cards/">All cards</a> · <a href="/#citations">Citations</a></p>
+<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/#citations">Citations</a></p>
 </footer>
 </main>
 </body>
@@ -165,6 +165,9 @@ def main(site_json, out_dir):
             s = f"{base}-{n}"
         taken[s] = cid
         card_slug[cid] = s
+
+    import landings
+    landing_plan = landings.plan_from_site(cards, secs, card_slug, landings.existing_titles(out_dir))
 
     for cid, c in cards.items():
         if cid not in card_slug:
@@ -256,6 +259,8 @@ def main(site_json, out_dir):
         if who and who in char_slug:
             rel.append(f'<a href="/character/{char_slug[who]}/">All {esc(who)} cards</a>')
         rel.append(f'<a href="/s/{TAB_SLUG.get(tab, slug(tab))}/">All {esc(tabname)} cards</a>')
+        for href, label in landing_plan.links.get(cid, []):
+            rel.append(f'<a href="{esc(href)}">{esc(label)}</a>')
         sibs = [i for i in (secs.get(tab, {}).get("categories") and
                 [x for c_ in secs[tab]["categories"] for x in c_["cards"]] or [])
                 if i in card_slug and i != cid][:6]
@@ -400,7 +405,9 @@ def main(site_json, out_dir):
     body = ['<nav class="crumb"><a href="/">Log Pose</a> › All cards</nav>',
             "<h1>Every card in Log Pose</h1>",
             f'<p class="sub">All {len(card_slug)} cards on the site, with their documented population. '
-            'Each links to its own page with the event-by-event count and the official sources behind it.</p>']
+            'Each links to its own page with the event-by-event count and the official sources behind it.</p>',
+            '<p>Browse the same cards by <a href="/sets/">set</a>, '
+            '<a href="/events/">event or prize set</a> and <a href="/tiers/">tier</a>.</p>']
     for tab in sorted(by_tab, key=lambda t: tabnames.get(t, t)):
         ids = sorted(by_tab[tab], key=lambda i: (cards[i]["name"], cards[i]["number"]))
         body.append(f'<h2>{esc(tabnames.get(tab, tab))} <span style="font:500 14px system-ui">({len(ids)})</span></h2><ul>')
@@ -509,6 +516,19 @@ def main(site_json, out_dir):
          body="\n".join(body))
     urls.append((SITE + "/questions/", "monthly", "0.8"))
 
+    urls.extend(landings.render(landing_plan, out_dir, cards, card_slug))
+    mainsets_path = os.path.join(out_dir, "s", "main-sets", "index.html")
+    if os.path.isfile(mainsets_path):
+        with open(mainsets_path, encoding="utf-8") as f:
+            mainsets_html = f.read()
+        mainsets_html, _changed = landings.link_mainsets(mainsets_html, landing_plan)
+        with open(mainsets_path, "w", encoding="utf-8") as f:
+            f.write(mainsets_html)
+    report = landings.counts(landing_plan)
+    print(f"sets       : {report['sets']} {report['set_families']}")
+    print(f"events     : {report['events']} {report['event_groups']}")
+    print(f"tiers      : {report['tiers']}")
+
     # ---- sitemap --------------------------------------------------------
     # Google ignores <changefreq> and <priority> but does read <lastmod>, and
     # uses it to decide what to recrawl. Stamp every URL with the build date.
@@ -531,4 +551,13 @@ def main(site_json, out_dir):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    if len(sys.argv) >= 2 and sys.argv[1] == "--catalog":
+        import json as _json
+        import landings
+        _built, _report = landings.apply_catalog(sys.argv[2], sys.argv[3])
+        print(_json.dumps({k: v for k, v in _report.items() if k != "broken_links"}, indent=2))
+        if _report["problems"] or _report["broken_count"] or _report["missing_card_files"] or _report["card_links_missed"]:
+            print("broken sample:", _report["broken_links"][:15])
+            raise SystemExit(1)
+    else:
+        main(sys.argv[1], sys.argv[2])
