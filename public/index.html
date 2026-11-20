@@ -3529,10 +3529,13 @@ const CSSET_TABS = new Set(["regionals","treasure","nationals","worlds"]);
 const REGIONS = ["North America","Europe","Latin America","Oceania"];
 /* ---- Navigation history: every screen, tab, view and card page is a state; Back returns to the previous one ---- */
 let restoring = false, navDepth = 0;
-/* The landing screen is its own address: logpose.cards/start. Tabs and cards
-   still live behind # fragments of the root page, so leaving home has to put
-   the path back or those fragments would hang off /start. */
-const HOME_URL = "/start";
+/* The landing screen stays at the root, logpose.cards/. It used to rewrite the
+   address to /start, but that read to Googlebot as a client-side redirect: the
+   homepage came back "Page with redirect" and would not index, and /start/ —
+   which the server sends back to / — became a redirect loop. /start still
+   works as a shareable shortcut via _redirects; it just never becomes the
+   displayed URL. Tabs and cards live behind # fragments of the root page. */
+const HOME_URL = "/";
 const LOG_URL = "/";
 function pushNav(st){
   if (restoring) return;
