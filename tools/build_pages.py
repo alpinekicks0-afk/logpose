@@ -510,11 +510,17 @@ def main(site_json, out_dir):
     urls.append((SITE + "/questions/", "monthly", "0.8"))
 
     # ---- sitemap --------------------------------------------------------
+    # Google ignores <changefreq> and <priority> but does read <lastmod>, and
+    # uses it to decide what to recrawl. Stamp every URL with the build date.
+    import datetime
+    lm = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-           f"  <url><loc>{SITE}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>"]
+           f"  <url><loc>{SITE}/</loc><lastmod>{lm}</lastmod>"
+           f"<changefreq>weekly</changefreq><priority>1.0</priority></url>"]
     for u, freq, pri in urls:
-        out.append(f"  <url><loc>{u}</loc><changefreq>{freq}</changefreq><priority>{pri}</priority></url>")
+        out.append(f"  <url><loc>{u}</loc><lastmod>{lm}</lastmod>"
+                   f"<changefreq>{freq}</changefreq><priority>{pri}</priority></url>")
     out.append("</urlset>")
     with open(os.path.join(out_dir, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
