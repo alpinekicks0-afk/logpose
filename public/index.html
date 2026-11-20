@@ -298,6 +298,7 @@ details.fold>.body{padding:0 16px 16px;display:grid;gap:12px;min-width:0}
 #home > *{position:relative;z-index:1}
 .home-title{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.6vw,64px);line-height:1;margin:0;color:var(--parchment);text-shadow:0 4px 24px rgba(0,0,0,.5)}
 .home-title span{color:var(--gold)}
+.catalog-status{margin:14px auto 0;max-width:40rem;color:var(--gold);font:600 15px/1.4 system-ui,sans-serif}
 .home-kicker{font-family:var(--label);font-weight:600;font-size:clamp(15px,1.6vw,20px);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 16px}
 .home-desc{max-width:66ch;font-size:clamp(15px,1.8vw,17px);color:var(--parchment-2);margin:10px auto 0;text-wrap:pretty;line-height:1.45}
 .home-desc{color:#fff}
@@ -730,6 +731,7 @@ details.lore>summary{color:var(--rum)}
 <section id="home" class="screen" aria-label="Welcome">
   <p class="home-kicker">A collector's guide for the ONE PIECE Trading Card Game</p>
   <h1 class="home-title">One Piece TCG <span>Log Pose</span></h1>
+  <p id="catalog-status" class="catalog-status" role="status">Loading the card catalog…</p>
   <div class="deck" id="deck" aria-hidden="true"></div>
   <p class="home-desc">Every championship prize card and the top hits from all of the main sets in the English ONE PIECE Card Game — Treasure Cups, Regionals, National Finals, the World Final, every serial-numbered card, the Main Sets chases, the iconic promos and even some language-exclusive cards — with its <b>true population</b> counted event by event from Bandai's official tournament pages, the official card image, graded-population and gem-rate data, and a citation for every number so you can check the work yourself.</p>
   <button type="button" class="sail" id="setSail" style="margin-top:26px">Set Sail</button>
@@ -841,6 +843,12 @@ details.lore>summary{color:var(--rum)}
 <script src="/assets/data.582b9839c4.js"></script>
 <script src="/assets/card-slugs.js"></script>
 <script>
+if (typeof CARDS !== "object" || typeof SECTIONS !== "object") {
+  var catalogStatus = document.getElementById("catalog-status");
+  if (catalogStatus) catalogStatus.textContent = "The card catalog didn't load. The links below still open every page.";
+} else {
+var catalogStatus = document.getElementById("catalog-status");
+if (catalogStatus) catalogStatus.remove();
 /* ============================================================
    RENDERING
    ============================================================ */
@@ -1754,6 +1762,7 @@ try{
 }catch(e){}
 document.querySelectorAll(".nav-back").forEach(b => b.addEventListener("click", goBack));
 updateBackButtons();
+}
 </script>
 
 </body></html>
