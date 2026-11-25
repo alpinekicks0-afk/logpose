@@ -3,3 +3,6 @@ Thumbs.db
 node_modules/
 .wrangler/
 .dev.vars
+
+# Python bytecode from running the tools
+__pycache__/
