@@ -1,0 +1,34 @@
+# <url> <name>   — fetched into incoming/<name>.webp by the "Fetch card images" workflow.
+# Clear the entries once the scans have been moved under public/img/.
+
+# OP-18 The Dominance of God — official English card list (series 569118)
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-031_p1.png OP18-031_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-031_p2.png OP18-031_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-060_p1.png OP18-060_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-060_p2.png OP18-060_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-065_p1.png OP18-065_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-065_p2.png OP18-065_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-119_p1.png OP18-119_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-119_p2.png OP18-119_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP17-119_p2.png OP17-119_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP17-119_p3.png OP17-119_p3
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-118_p1.png OP18-118_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-049_p1.png OP18-049_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP13-012_p1.png OP13-012_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP13-113_p2.png OP13-113_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP17-040_p2.png OP17-040_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-084_p2.png OP18-084_p2
+https://en.onepiece-cardgame.com/images/cardlist/card/ST24-004_p1.png ST24-004_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/ST34-004_p1.png ST34-004_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-096_p1.png OP18-096_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-093_p1.png OP18-093_p1
+https://en.onepiece-cardgame.com/images/cardlist/card/OP18-093_p2.png OP18-093_p2
+
+# OP-18 French edition — exclusive Treasure Rare
+https://fr.onepiece-cardgame.com/images/cardlist/card/OP18-009_p1.webp FR_OP18-009_p1
+
+# Treasure Cup December 2026 — official event page
+https://en.onepiece-cardgame.com/onepiececg/bccard/en/news/2026/11/09/fpqG0kH5vw8R1kQW/batch_OP16-015_haku.webp TC_OP16-015
+https://en.onepiece-cardgame.com/onepiececg/bccard/en/news/2026/11/09/TioybwJK1uUOV7Ei/batch_OP17-027_haku.webp TC_OP17-027
+https://en.onepiece-cardgame.com/onepiececg/bccard/en/news/2026/11/09/mgeTRZStQLK1FcNA/batch_ST32-003_haku.webp TC_ST32-003
+https://en.onepiece-cardgame.com/onepiececg/bccard/en/news/2026/11/09/GnYvXrbXWa2t2j9b/image_OPCGE-UncutSheet_OP-16.webp TC_sheet_OP-16
