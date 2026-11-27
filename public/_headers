@@ -24,3 +24,13 @@
   Cache-Control: public, max-age=0, must-revalidate
 /methodology/*
   Cache-Control: public, max-age=0, must-revalidate
+/account/*
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/account.js
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/account-app.js
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/account.css
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/cards-index.json
+  Cache-Control: public, max-age=0, must-revalidate
