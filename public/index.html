@@ -373,6 +373,7 @@ details.fold>.body{padding:0 16px 16px;display:grid;gap:12px;min-width:0}
 @media (min-width:760px){.route,.library{display:none!important}}
 @media (max-width:759px){.chart{display:none}}
 @media (prefers-reduced-motion:reduce){.chart .sea-route{animation:none}}
+a.gl-nav{text-decoration:none;line-height:normal}
 .gl-nav{font:inherit;font-size:13px;background:transparent;color:var(--parchment-2);border:1px solid rgba(217,163,58,.5);border-radius:999px;padding:5px 12px;cursor:pointer}
 
 /* ================= Mobile ================= */
@@ -742,6 +743,7 @@ details.lore>summary{color:var(--rum)}
   <button type="button" class="sail about-btn" id="aboutBtn">About / Disclaimer</button>
   <button type="button" class="skip-adv" id="skipAdv">Skip the adventure → straight to the data</button>
   <nav class="sitelinks" aria-label="Browse by section">
+    <a href="/account/">Account</a>
     <a href="/cards/">All cards &amp; populations</a>
     <a href="/sets/">Sets</a>
     <a href="/events/">Events</a>
@@ -808,6 +810,7 @@ details.lore>summary{color:var(--rum)}
     <span class="pill">Sourced from Bandai</span>
     <button type="button" class="gl-nav nav-back" title="Go back to the previous page" hidden>← Back</button>
     <button type="button" class="gl-nav" id="toMap" title="Back to the Grand Line map">⚓ Grand Line</button>
+    <a class="gl-nav lp-acct" href="/account/" title="Your account: wishlist, collection and chats">Account</a>
   </div>
 </header>
 
@@ -846,6 +849,7 @@ details.lore>summary{color:var(--rum)}
 </div>
 <script src="/assets/data.cdd101b985.js"></script>
 <script src="/assets/card-slugs.js"></script>
+<script src="/assets/account.js" defer></script>
 <script>
 if (typeof CARDS !== "object" || typeof SECTIONS !== "object") {
   var catalogStatus = document.getElementById("catalog-status");

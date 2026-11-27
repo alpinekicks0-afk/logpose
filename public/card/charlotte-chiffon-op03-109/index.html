@@ -28,7 +28,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--parchment);color:var(--ink);
  font:17px/1.65 Georgia,"Iowan Old Style","Times New Roman",serif;-webkit-text-size-adjust:100%}
-header{background:var(--sea);color:var(--parchment);padding:14px 20px}
+header{background:var(--sea);color:var(--parchment);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header a.lp-acct{font:600 13px/1.2 system-ui,sans-serif;letter-spacing:0;border:1px solid rgba(217,163,58,.55);border-radius:999px;padding:6px 12px}
 header a{color:var(--parchment);text-decoration:none;font-weight:700;letter-spacing:.04em}
 header .g{color:var(--gold)}
 main{max-width:760px;margin:0 auto;padding:28px 20px 72px}
@@ -69,7 +70,7 @@ footer{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-si
 </style>
 </head>
 <body>
-<header><a href="/">Log <span class="g">Pose</span></a></header>
+<header><a href="/">Log <span class="g">Pose</span></a><a class="lp-acct" href="/account/">Account</a></header>
 <main>
 <nav class="crumb"><a href="/">Log Pose</a> › <a href="/s/regionals/">Regionals</a> › OP03-109</nav>
 <div class="hero">
@@ -78,6 +79,7 @@ footer{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-si
 <h1>Charlotte Chiffon · OP03-109</h1>
 <p class="sub">Champion · English</p>
 <div class="pop">14+<small>Documented population</small></div>
+<div class="lp-actions" data-card="off23-ch-v2-op03-109"></div>
 </div></div>
 <p>Champion card · Offline Regional 2023 Champion Card Set Vol.2 · Championship 2023 · Wave 3 (Oct–Dec)</p>
 <h2>Card details</h2><dl>
@@ -119,8 +121,9 @@ footer{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-si
 <p><strong>Log Pose</strong> is an unofficial fan project. Not affiliated with, endorsed by or connected to
 Bandai, Shueisha, Toei Animation or Eiichiro Oda. All card images and artwork belong to their respective owners.
 Population figures are our own research from the official sources cited on each page.</p>
-<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a> · <a href="/support/">Support</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
+<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a> · <a href="/account/">Account</a> · <a href="/support/">Support</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
 </footer>
 </main>
+<script src="/assets/account.js" defer></script>
 </body>
 </html>

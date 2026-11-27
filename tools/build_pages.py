@@ -474,7 +474,8 @@ SHELL = """<!doctype html>
 *{{box-sizing:border-box}}
 body{{margin:0;background:var(--parchment);color:var(--ink);
  font:17px/1.65 Georgia,"Iowan Old Style","Times New Roman",serif;-webkit-text-size-adjust:100%}}
-header{{background:var(--sea);color:var(--parchment);padding:14px 20px}}
+header{{background:var(--sea);color:var(--parchment);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}}
+header a.lp-acct{{font:600 13px/1.2 system-ui,sans-serif;letter-spacing:0;border:1px solid rgba(217,163,58,.55);border-radius:999px;padding:6px 12px}}
 header a{{color:var(--parchment);text-decoration:none;font-weight:700;letter-spacing:.04em}}
 header .g{{color:var(--gold)}}
 main{{max-width:760px;margin:0 auto;padding:28px 20px 72px}}
@@ -515,16 +516,17 @@ footer{{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-s
 </style>
 </head>
 <body>
-<header><a href="/">Log <span class="g">Pose</span></a></header>
+<header><a href="/">Log <span class="g">Pose</span></a><a class="lp-acct" href="/account/">Account</a></header>
 <main>
 {body}
 <footer>
 <p><strong>Log Pose</strong> is an unofficial fan project. Not affiliated with, endorsed by or connected to
 Bandai, Shueisha, Toei Animation or Eiichiro Oda. All card images and artwork belong to their respective owners.
 Population figures are our own research from the official sources cited on each page.</p>
-<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a> · <a href="/support/">Support</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
+<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a> · <a href="/account/">Account</a> · <a href="/support/">Support</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
 </footer>
 </main>
+<script src="/assets/account.js" defer></script>
 </body>
 </html>
 """
@@ -599,6 +601,7 @@ def main(site_json, out_dir):
             body.append(f'<p class="sub">{esc(c["place"])}{" · " + esc(c["language"]) if c.get("language") else ""}</p>')
         label = "Documented population" if c.get("popKey") else "Print run"
         body.append(f'<div class="pop">{esc(popline)}<small>{esc(label)}</small></div>')
+        body.append(f'<div class="lp-actions" data-card="{esc(cid)}"></div>')
         body.append("</div></div>")
 
         if spotlight.get(cid, {}).get("lore"):
@@ -1047,13 +1050,31 @@ def main(site_json, out_dir):
 """)
 
     info_page("/privacy/", "Log Pose privacy policy",
-              "What Log Pose does and does not collect: no accounts, no ads, no tracking cookies, and three display preferences saved on your own device.",
+              "What Log Pose does and does not collect: no ads and no tracking cookies. Browsing needs no account; optional accounts store only what you add to them.",
               "Privacy", f"""
 <h1>Privacy</h1>
 <p class="sub">Last updated {updated}.</p>
 <p>Log Pose is a fan reference site kept by two collectors (see <a href="/about/">About</a>). This page says, in plain words, what happens to information when you use logpose.cards.</p>
-<h2>What we collect</h2>
-<p>Nothing that identifies you. The site has no accounts, no sign-up, no forms, no comments, no advertising and no tracking or advertising cookies. We do not sell or share personal information, because we do not have any.</p>
+<h2>Browsing without an account</h2>
+<p>You can read every page without signing in, and when you do we collect nothing that identifies you. The site has no advertising and no tracking or advertising cookies. We do not sell or share personal information.</p>
+<h2>If you create an account</h2>
+<p>Accounts are optional and are for people aged 18 or over. An account stores only what is needed to make its features work:</p>
+<ul>
+<li><strong>Sign-in.</strong> You sign in with Google or Discord. We ask them only to confirm who you are, and we keep one thing from the answer: an ID number for your account with them, so we can recognise you next time. We never see your password. We do not ask for your email address, and we do not keep your name, picture or anything else Google or Discord may send along.</li>
+<li><strong>Your profile.</strong> The username you choose, whether your account is public or private, and an Instagram name and a references link if you add them.</li>
+<li><strong>Your lists.</strong> The cards on your wishlist and in your collection, with the grade you give each one.</li>
+<li><strong>Connections.</strong> Chat requests and your answers to them, friend requests and friends, accounts you have blocked, and the messages you send and receive in chats.</li>
+<li><strong>Reports.</strong> If you report an account, what you wrote and which account and chat it concerns.</li>
+</ul>
+<h2>Who can see your account</h2>
+<p>A <strong>private</strong> account cannot be found in search. Only friends you have accepted can see its wishlist, collection and links, and nobody is sent a chat request about cards it owns. A <strong>public</strong> account can be found by other signed-in members, who can see its wishlist, collection and links; when a card in a public collection is on someone's wishlist, both people get a chat request naming that card. Nothing in an account is shown to visitors who are not signed in, and accounts are kept out of search engines.</p>
+<p>If you add a card to your wishlist, the public collectors who own it are sent a chat request. They see your username only if your account is public, you are friends, or you both accept.</p>
+<h2>Chats</h2>
+<p>A chat opens only when both people accept a request. Messages are stored in our database so they can be delivered; they are private to the two of you but are not end-to-end encrypted. We read a chat only when one of the two people in it reports it, in order to look into that report.</p>
+<h2>Deleting your account</h2>
+<p>You can delete your account at any time from its Profile tab. That removes your profile, lists, friends, blocks and chats, including the other person's copy of each chat. Reports you sent or received are kept without your account attached.</p>
+<h2>Cookies and the captcha</h2>
+<p>Signing in sets cookies that keep you signed in for up to 30 days. They are used for nothing else and are removed when you sign out. Creating an account requires a captcha, Cloudflare Turnstile, to confirm you are a person; Cloudflare checks signals from your browser and your IP address to do that. Account information is stored in a Cloudflare database.</p>
 <h2>What is saved on your device</h2>
 <p>The site remembers three display choices — how lists are sorted and which view you last used — in your browser's local storage, so they are still set when you come back. They stay on your device, are never sent to us, and disappear if you clear your browser's site data.</p>
 <h2>Hosting and visitor statistics</h2>
@@ -1061,7 +1082,7 @@ def main(site_json, out_dir):
 <h2>Fonts and outside links</h2>
 <p>The interactive ledger loads its typefaces from Google Fonts, which means your browser requests those font files from Google's servers. Card pages also link to outside sites, including Bandai's official pages and Instagram; once you follow a link, that site's own privacy policy applies.</p>
 <h2>Changes and contact</h2>
-<p>If the site ever starts collecting anything more — for example, if an app with saved lists or notifications is released — this page will be updated before that happens. Questions: {contact}</p>
+<p>If the site ever starts collecting anything more, this page will be updated before that happens. Questions: {contact}</p>
 """)
 
     info_page("/terms/", "Log Pose terms of use",
@@ -1076,11 +1097,34 @@ def main(site_json, out_dir):
 <p>Population counts are our own tallies from the official sources cited on each page, following the rules on the <a href="/methodology/">methodology</a> page. They are not Bandai figures and not a grading-company population report. They can be incomplete or wrong, and leaked or uncounted copies exist. Nothing here is financial advice or a guarantee of scarcity or value — check the sources yourself before buying, selling or grading a card.</p>
 <h2>Using the data</h2>
 <p>You are welcome to quote figures and link to any page; please credit Log Pose and link the page you used. Please do not copy the dataset wholesale, republish it as your own, or present these figures as official.</p>
+<h2>Accounts</h2>
+<p>Accounts are optional and free. To have one you must be 18 or older, and each person may have one account. Choose a username that is not offensive and does not pretend to be someone else.</p>
+<p>List only cards you really own, and be honest about their grade. Do not use chats, friend requests or profile links to harass, spam, scam, threaten or advertise, or for anything illegal. You are responsible for what you post and for the links you add to your profile.</p>
+<p>You can block or report any account. We may remove content, or suspend or delete an account, that breaks these terms. You can delete your own account at any time from its Profile tab.</p>
+<h2>Trades between members</h2>
+<p>Log Pose only introduces collectors to each other. We are not a marketplace, broker or escrow service, and we take no part in any sale or trade. We do not verify who members are, that they own the cards they list, or the references they link to. Any deal you make is between you and the other person, at your own risk; check references and use a payment method with buyer protection.</p>
 <h2>No warranty</h2>
 <p>The site is provided as is. We try to keep it accurate and online, but we may change, correct or remove anything at any time, and we are not liable for decisions made using it.</p>
 <h2>Changes and contact</h2>
 <p>These terms may be updated; the date above shows the latest version. Questions, corrections and removal requests go through the <a href="/support/">support</a> page.</p>
 """)
+
+    # ---- account page -------------------------------------------------------
+    acct_title = "Your account | Log Pose"
+    acct_html = SHELL.format(
+        title=esc(acct_title), desc="Your Log Pose account: wishlist, collection, chat requests, chats and friends.",
+        canon=SITE + "/account/", ogtitle=esc(acct_title), ogtype="website", ogimage=SITE + "/og.png", jsonld="",
+        ogextra=og_extra("Log Pose — a collector's guide for the ONE PIECE Trading Card Game", 1200, 630),
+        body="""<nav class="crumb"><a href="/">Log Pose</a> › Account</nav>
+<link rel="stylesheet" href="/assets/account.css">
+<div id="lp-account"><noscript>The account section needs JavaScript.</noscript><p class="sub">Loading your account…</p></div>
+<script src="/assets/account-app.js" defer></script>""")
+    acct_canon = '<link rel="canonical" href="' + SITE + '/account/">\n'
+    assert acct_canon in acct_html
+    acct_html = acct_html.replace(acct_canon, '<meta name="robots" content="noindex">\n', 1)
+    os.makedirs(os.path.join(out_dir, "account"), exist_ok=True)
+    with open(os.path.join(out_dir, "account", "index.html"), "w", encoding="utf-8") as f:
+        f.write(acct_html)
 
     # ---- 404 page ---------------------------------------------------------
     # wrangler serves this for every unmatched URL. It used to be a full copy
@@ -1171,6 +1215,10 @@ def main(site_json, out_dir):
     with open(os.path.join(out_dir, "assets", "card-slugs.js"), "w", encoding="utf-8") as f:
         f.write("var CARD_SLUGS = " + json.dumps(card_slug, ensure_ascii=False, separators=(",", ":")) + ";\n")
     sync_data_asset(out_dir)
+    index = {cid: {"n": c.get("name", ""), "no": c.get("number", ""), "p": c.get("place", ""),
+                   "i": c.get("image", ""), "s": card_slug.get(cid, "")} for cid, c in cards.items()}
+    with open(os.path.join(out_dir, "assets", "cards-index.json"), "w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
 
     # ---- sitemap --------------------------------------------------------
     # Google ignores <changefreq> and <priority> but does read <lastmod>, and

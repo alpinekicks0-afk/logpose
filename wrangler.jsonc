@@ -1,12 +1,23 @@
 {
-  // Static site. Everything served from ./public — keeping the site in its own
-  // folder stops the deploy from sweeping in .git, whose pack file is larger
-  // than Cloudflare's 25 MiB per-asset limit.
+  // The site is static files in ./public — keeping it in its own folder stops
+  // the deploy from sweeping in .git, whose pack file is larger than
+  // Cloudflare's 25 MiB per-asset limit.
+  //
+  // worker/index.js is the accounts API. It only runs for /api/* (and for
+  // addresses that match no file, which it hands straight back to the asset
+  // server for the 404 page). Every page, image and script is still served
+  // directly as a static file, exactly as before.
   "name": "logpose",
   "compatibility_date": "2026-10-23",
+  "main": "worker/index.js",
   "assets": {
     "directory": "./public",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
   },
+  // Accounts stay switched off until a D1 database is bound as DB (here for
+  // production, and under "previews" for preview builds) and the sign-in and
+  // captcha keys are set. See docs/accounts-setup.md.
   "previews": {}
 }
