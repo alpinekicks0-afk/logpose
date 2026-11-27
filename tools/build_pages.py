@@ -522,7 +522,7 @@ footer{{border-top:1px solid var(--rule);margin-top:48px;padding-top:18px;font-s
 <p><strong>Log Pose</strong> is an unofficial fan project. Not affiliated with, endorsed by or connected to
 Bandai, Shueisha, Toei Animation or Eiichiro Oda. All card images and artwork belong to their respective owners.
 Population figures are our own research from the official sources cited on each page.</p>
-<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a></p>
+<p><a href="/">Home</a> · <a href="/sets/">Sets</a> · <a href="/events/">Events</a> · <a href="/tiers/">Tiers</a> · <a href="/cards/">All cards</a> · <a href="/characters/">Characters</a> · <a href="/rarest/">Rarest</a> · <a href="/about/">About</a> · <a href="/methodology/">Methodology</a> · <a href="/support/">Support</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
 </footer>
 </main>
 </body>
@@ -1003,6 +1003,110 @@ def main(site_json, out_dir):
                     "isPartOf": {"@type": "WebSite", "name": NAME, "url": SITE + "/"}}),
          body=method_body)
     urls.append((SITE + "/methodology/", "monthly", "0.6"))
+
+    # ---- support, privacy, terms ----------------------------------------
+    # Plain-language pages. Keep them factual: the privacy page has to match
+    # what the site really does (no accounts, no forms, no ads; three display
+    # preferences in localStorage; Cloudflare hosting; Google Fonts in the app).
+    updated = "November 27, 2026"
+    contact = ('Message either of the two collectors who keep the site on Instagram: '
+               '<a href="https://www.instagram.com/alpine.cards/" rel="noopener">@alpine.cards</a> or '
+               '<a href="https://www.instagram.com/davy_d_xebec_/" rel="noopener">@davy_d_xebec_</a>.')
+
+    def info_page(path, title, desc, crumb, body):
+        t = fit_title(title)
+        page(path, out_dir, title=esc(t), desc=esc(desc), canon=SITE + path, ogtitle=esc(t), ogtype="website",
+             jsonld=ld({"@context": "https://schema.org", "@type": "WebPage", "name": title, "description": desc,
+                        "url": SITE + path, "isPartOf": {"@type": "WebSite", "name": NAME, "url": SITE + "/"}}),
+             body=f'<nav class="crumb"><a href="/">Log Pose</a> › {crumb}</nav>\n' + body.strip())
+        urls.append((SITE + path, "yearly", "0.3"))
+
+    info_page("/support/", "Log Pose support and corrections",
+              "How to reach Log Pose, report a wrong population count or a missing card, and fix common problems on the site.",
+              "Support", f"""
+<h1>Support</h1>
+<p class="sub">Questions, corrections and problems with the site.</p>
+<h2>Get in touch</h2>
+<p>{contact} We read every message, though as a two-person fan project replies can take a few days.</p>
+<h2>Report a wrong count or a missing card</h2>
+<p>Corrections are welcome and they make the ledger better. To help us check quickly, send:</p>
+<ul>
+<li>the card name and number (for example, OP15-092) and a link to its page here;</li>
+<li>what you believe the right figure or detail is;</li>
+<li>the source — ideally the official Bandai event or product page it comes from.</li>
+</ul>
+<p>How counts are built, and what we do and do not count, is on the <a href="/methodology/">methodology</a> page.</p>
+<h2>Common problems</h2>
+<dl>
+<dt>Images are blank</dt><dd>Reload the page. If a card still shows an empty frame, close the tab and open <a href="/">logpose.cards</a> again, then tell us which card it was.</dd>
+<dt>A link says page not found</dt><dd>Some card addresses changed as the site grew. Find the card from <a href="/cards/">All cards</a> or its <a href="/sets/">set</a>.</dd>
+<dt>A number looks out of date</dt><dd>Ongoing seasons are counted event by event as they are played, so a figure marked with a plus sign is still growing.</dd>
+</dl>
+<h2>Rights holders</h2>
+<p>If you own rights in anything shown here and want it changed or removed, message us at either account above and we will act on it promptly.</p>
+""")
+
+    info_page("/privacy/", "Log Pose privacy policy",
+              "What Log Pose does and does not collect: no accounts, no ads, no tracking cookies, and three display preferences saved on your own device.",
+              "Privacy", f"""
+<h1>Privacy</h1>
+<p class="sub">Last updated {updated}.</p>
+<p>Log Pose is a fan reference site kept by two collectors (see <a href="/about/">About</a>). This page says, in plain words, what happens to information when you use logpose.cards.</p>
+<h2>What we collect</h2>
+<p>Nothing that identifies you. The site has no accounts, no sign-up, no forms, no comments, no advertising and no tracking or advertising cookies. We do not sell or share personal information, because we do not have any.</p>
+<h2>What is saved on your device</h2>
+<p>The site remembers three display choices — how lists are sorted and which view you last used — in your browser's local storage, so they are still set when you come back. They stay on your device, are never sent to us, and disappear if you clear your browser's site data.</p>
+<h2>Hosting and visitor statistics</h2>
+<p>The site is delivered by Cloudflare. Like any web host, Cloudflare's servers handle technical details of each request — such as IP address, browser type and the page requested — in order to deliver pages and protect the site from abuse. Cloudflare also gives us aggregate statistics, such as how many visits a page had and which countries or sites they came from. Those statistics do not let us identify individual visitors and are not used for advertising. Cloudflare's own policy is at <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a>.</p>
+<h2>Fonts and outside links</h2>
+<p>The interactive ledger loads its typefaces from Google Fonts, which means your browser requests those font files from Google's servers. Card pages also link to outside sites, including Bandai's official pages and Instagram; once you follow a link, that site's own privacy policy applies.</p>
+<h2>Changes and contact</h2>
+<p>If the site ever starts collecting anything more — for example, if an app with saved lists or notifications is released — this page will be updated before that happens. Questions: {contact}</p>
+""")
+
+    info_page("/terms/", "Log Pose terms of use",
+              "Terms for using Log Pose: an unofficial fan reference whose population figures are research, not official Bandai numbers or financial advice.",
+              "Terms", f"""
+<h1>Terms of use</h1>
+<p class="sub">Last updated {updated}.</p>
+<p>Log Pose is a free, unofficial fan reference. By using logpose.cards you agree to the points below.</p>
+<h2>An unofficial fan project</h2>
+<p>Log Pose is not affiliated with, endorsed by, sponsored by or connected to Bandai, Shueisha, Toei Animation or Eiichiro Oda. ONE PIECE and related names, card images and artwork belong to their respective owners and are shown here only to identify the cards being discussed.</p>
+<h2>The figures are research, not official numbers</h2>
+<p>Population counts are our own tallies from the official sources cited on each page, following the rules on the <a href="/methodology/">methodology</a> page. They are not Bandai figures and not a grading-company population report. They can be incomplete or wrong, and leaked or uncounted copies exist. Nothing here is financial advice or a guarantee of scarcity or value — check the sources yourself before buying, selling or grading a card.</p>
+<h2>Using the data</h2>
+<p>You are welcome to quote figures and link to any page; please credit Log Pose and link the page you used. Please do not copy the dataset wholesale, republish it as your own, or present these figures as official.</p>
+<h2>No warranty</h2>
+<p>The site is provided as is. We try to keep it accurate and online, but we may change, correct or remove anything at any time, and we are not liable for decisions made using it.</p>
+<h2>Changes and contact</h2>
+<p>These terms may be updated; the date above shows the latest version. Questions, corrections and removal requests go through the <a href="/support/">support</a> page.</p>
+""")
+
+    # ---- 404 page ---------------------------------------------------------
+    # wrangler serves this for every unmatched URL. It used to be a full copy
+    # of the app, which answered dead links with the homepage under the
+    # homepage's title. A real not-found page is clearer for people and for
+    # search engines. It is not indexable and has no canonical.
+    nf_title = "Page not found | Log Pose"
+    nf_desc = "This page is not in the Log Pose ledger. Find the card from the full card list, its set or its character."
+    nf_html = SHELL.format(
+        title=esc(nf_title), desc=esc(nf_desc), canon=SITE + "/", ogtitle=esc(nf_title), ogtype="website",
+        ogimage=SITE + "/og.png", jsonld="",
+        ogextra=og_extra("Log Pose — a collector's guide for the ONE PIECE Trading Card Game", 1200, 630),
+        body="""<h1>Page not found</h1>
+<p class="sub">That address is not in the ledger.</p>
+<p>The link may be old or mistyped. Some card addresses changed as the site grew, so the card you want is most likely still here:</p>
+<ul>
+<li><a href="/cards/">Every card</a>, searchable with your browser's find</li>
+<li><a href="/sets/">Sets</a>, <a href="/events/">events</a> and <a href="/tiers/">prize tiers</a></li>
+<li><a href="/characters/">Characters</a> and the <a href="/rarest/">rarest cards</a></li>
+</ul>
+<p><a href="/"><strong>Open the Log Pose home page →</strong></a></p>""")
+    canon_tag = '<link rel="canonical" href="' + SITE + '/">\n'
+    assert canon_tag in nf_html
+    nf_html = nf_html.replace(canon_tag, '<meta name="robots" content="noindex">\n', 1)
+    with open(os.path.join(out_dir, "404.html"), "w", encoding="utf-8") as f:
+        f.write(nf_html)
 
     # ---- redirects for renamed card URLs --------------------------------
     # Previous 301s are kept, so a later rebuild still serves the old paths
